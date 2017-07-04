@@ -1,0 +1,18 @@
+div.error(ng-if='form.error')
+  alert(type='warning', close='form.error = null')
+    div(ng-if='form.error.length === 1')
+      strong Ошибка: 
+      | {{form.error[0].err}}
+    div(ng-if='form.error.length > 1')
+      strong Ошибка: 
+      ul(ng-repeat='error in form.error')
+        li {{error.err}}
+
+div(ng-transclude)
+
+button.btn.btn-primary.pull-right(ng-if='!form.editMode', type='submit', ng-click='edit()') Редактировать
+div.btn-group.pull-right(ng-if='form.editMode')
+  button.btn.m.btn-primary(type='submit', ng-click='confirm()') Сохранить
+  button.btn.m.btn-default(type='submit', ng-click='cancel()'): span.glyphicon.glyphicon-remove
+  
+

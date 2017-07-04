@@ -1,0 +1,134 @@
+extends layout
+block body
+  div(ng-controller='TreeContextMenuCtrl')
+    div#context-menu.dropdown
+      ul.dropdown-menu
+        li(ng-repeat='item in context.menu', ng-class='{disabled: item.disabled, divider: item.divider}')
+          a(ng-if='!item.divider', href='', ng-click='item.call(context.options)')
+            span.glyphicon(ng-if='item.icon', ng-class='item.icon') &nbsp;
+            |{{item.label}}
+
+  header
+    div.navbar.navbar-static-top.navbar-inverse(role='navigation', ng-controller='TopNavCtrl')
+      div.container
+        div.navbar-header
+          button(data-target='.navbar-collapse', data-toggle='collapse', class='navbar-toggle', type='button')
+            span(class='sr-only') Toggle navigation
+          a(href='.', class='navbar-brand') IPdb <span class='label label-default'>Web</span>
+        div(class='collapse navbar-collapse')
+          ul(class='nav navbar-nav')
+            li: a(href='') База данных
+            li.dropdown
+              a.dropdown-toggle(href='') Службы
+                b.caret
+              ul.dropdown-menu
+                li: a(href='', ng-click='updateDHCP()') Обновить DHCP
+                li: a(href='', ng-click='updateDNS()') Обновить DNS
+                li.divider
+                li: a(href='', ng-click='showTasks()') Задания
+            li: a(href='', ng-click='showHistory()') Журнал
+
+  section
+    div.index-spinner(ng-if='false')
+    div.container(ng-cloak)
+      div.row(ng-controller='SearchBarCtrl')
+        div.search-bar(ng-class='{"col-sm-4 col-sm-offset-8": !search.focused, "col-sm-8 col-sm-offset-4": search.focused}')
+          div.input-group
+            form(ng-submit='dosearch()')
+              input.form-control(type='text', placeholder='Поиск', ng-model='search.text', typeahead='item for item in getTypeahead($viewValue)',
+                  typeahead-wait-ms='200', ng-focus='search.focused=true', ng-blur='search.focused=false')
+            div.input-group-btn
+              button.btn.btn-default.dropdown-toggle(data-toggle='dropdown', type='button', style='border-radius: 0;') {{search.selected.label}}&nbsp;
+                span.caret
+                span.sr-only Toggle Dropdown
+              ul.dropdown-menu.pull-right
+                li(ng-repeat='item in search.ddList')
+                  a(ng-if='!item.divider', ng-click='select($index)') {{item.label}}
+                  p.divider(ng-if='item.divider')
+
+              button.btn.btn-primary(type='button', ng-click='dosearch()')
+                span.glyphicon.glyphicon-search
+
+      div.row
+        div(ng-controller='LeftTabsCtrl')
+          div(ng-hide='fullscreen.right', ng-class='{"col-sm-4":!fullscreen.left, "col-sm-12":fullscreen.left}')
+            tabset.left-tabs
+              tab(ng-repeat='tab in tabs', active='tab.active', disabled='tab.disabled', ng-mouseenter='hover=true', ng-mouseleave='hover=false')
+                tab-heading(ng-dblclick='collapse(tab.collapse, $event)') {{tab.title}}
+                //- div.well-gr.hscrollbar(ng-include='tab.template', ng-dblclick='collapse(tab.collapse, $event)')
+                div.well-gr.hscrollbar(ng-include='tab.template', ng-dblclick='collapse(tab.collapse, $event)', ng-class='{"zindex": hover && $index == 4 || searchTabHover}')
+
+        div(ng-controller='RightTabsCtrl')
+          div(ng-hide='fullscreen.left || tabs.length==0', ng-class='{"col-sm-8":!fullscreen.right, "col-sm-12":fullscreen.right}')
+            div.tabs-bg
+              tabset.right-tabs
+                //-tab(heading="Static title") Static content
+                tab(ng-repeat='tab in tabs', active='tab.active', disabled='tab.disabled', select='selectTab(tab)')
+                  tab-heading(ng-dblclick='fsToggle($event)') {{tab.title}}
+                    button.close(type='button', ng-click='closeTab($index)'): span.glyphicon.glyphicon-remove
+                  //-div.static: {{tab.content}}
+                  div.hscrollbar-r(ng-include='tab.template', ng-init='tab=tab') //- ng-dblclick='fsToggle($event)')
+          div.col-sm-8(ng-hide='tabs.length>0')
+            div(ng-include='"/partials/welcome"')
+
+
+  footer
+    include footer.jade
+
+  //- NB:
+      ngmin портит все минифицированные файлы
+      usemin не любит точки в именах concat файлов
+      usemin пока не работает с jade, поэтому все скрипты, которые не должны попасть в продакшн, необходимо выносить из <!-- build:js -->
+        script(src='bower_components/bootstrap/dist/js/bootstrap.js')
+
+  <!-- build:js(public) scripts/vendor.js -->
+  // bower:js
+  script(src='bower_components/jquery/jquery.js')
+  script(src='bower_components/angular/angular.js')
+  script(src='bower_components/angular-route/angular-route.js')
+  script(src='bower_components/angular-sanitize/angular-sanitize.js')
+  //- script(src='bower_components/angular-animate/angular-animate.js')
+  script(src='bower_components/angular-bootstrap/ui-bootstrap-tpls.js')
+  script(src='bower_components/ng-grid/build/ng-grid.min.js')
+  script(src='bower_components/toastr/toastr.js')
+  script(src='bower_components/angular-loading-bar/src/loading-bar.js')
+  script(src='bower_components/ng-context-menu/dist/ng-context-menu.js')
+  // endbower
+
+  //- Kendo UI (having problems with grunt-bower-install)
+  script(src='bower_components/kendo-ui/src-com/js/kendo.core.js')
+  script(src='bower_components/kendo-ui/src-com/js/kendo.data.js')
+  script(src='bower_components/kendo-ui/src-com/js/kendo.treeview.js')
+  script(src='bower_components/angular-kendo/angular-kendo.js')
+
+  script(src='js/lib/scrollToTop.js')
+  //- socket-io can serve: script(src='/socket.io/socket.io.js')
+  script(src='bower_components/socket.io-client/dist/socket.io.js')
+  script(src='bower_components/angular-socket-io/socket.js')
+  <!-- endbuild -->
+
+  <!-- build:js({.tmp,public}) scripts/app.js -->
+  script(src='js/app.js')
+  script(src='js/locationTree/locationTreeCtrl.js')
+  script(src='js/locationTree/locationTreeSvc.js')
+  script(src='js/ipTree/ipTreeCtrl.js')
+  script(src='js/ipTree/ipTreeSvc.js')
+  script(src='js/dnsTree/dnsTreeCtrl.js')
+  script(src='js/dnsTree/dnsTreeSvc.js')
+  script(src='js/vlanTree/vlanTreeCtrl.js')
+  script(src='js/vlanTree/vlanTreeSvc.js')
+  script(src='js/eqTab/eqTabCtrl.js')
+  script(src='js/eqTab/eqTabSvc.js')
+  script(src='js/ipTab/ipTabCtrl.js')
+  script(src='js/ipTab/ipTabSvc.js')
+  script(src='js/dnsTab/dnsTabCtrl.js')
+  script(src='js/dnsTab/dnsTabSvc.js')
+  script(src='js/modals/modalsCtrl.js')
+  script(src='js/modals/modalsSvc.js')
+  script(src='js/services.js')
+  script(src='js/controllers.js')
+  script(src='js/filters.js')
+  script(src='js/directives.js')
+
+  //script(src='js/dashboard-client.js')
+  <!-- endbuild -->

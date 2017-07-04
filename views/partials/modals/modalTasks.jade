@@ -1,0 +1,16 @@
+.modal-header
+  h3.modal-title Текущие задачи
+.modal-body
+  table.table.table-condensed.table-hover.table-bordered.table-responsive.table-collapsable
+    thead
+      tr
+        th(ng-repeat='th in thead', ng-click='changeSorting(th.column)')
+          span.pull-left {{ th.title }}
+          span.sortable(ng-show='sort.column == th.column && !sort.descending').glyphicon.glyphicon-chevron-up
+          span.sortable(ng-show='sort.column == th.column && sort.descending').glyphicon.glyphicon-chevron-down
+    tbody
+      tr(ng-repeat='row in table|orderBy:sort.column:sort.descending', ng-class='{warning: row.css}')
+        td(ng-repeat='th in thead', data-title='{{th.title}}') {{ row[th.column] | date:'dd.MM.yy HH:mm:ss'}}
+
+.modal-footer
+  button.btn.btn-primary(ng-click='close()') Закрыть

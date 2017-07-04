@@ -1,0 +1,6 @@
+.modal-header
+  h3.modal-title Журнал событий {{data.eqLabel}}
+.modal-body
+  div.obj-history-grid(ng-grid='gridOptions')
+.modal-footer
+  button.btn.btn-primary(ng-click='close()') Закрыть

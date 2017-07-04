@@ -1,0 +1,91 @@
+doctype html
+html(lang='ru')
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    title IPdb · Dashboard
+    meta(name='description', content='Realtime dashboard')
+    meta(name='author', content='minko')
+    <!-- build:css(public) styles/dboard-vendor.css -->
+    link(rel='stylesheet', href='bower_components/bootstrap/dist/css/bootstrap.css')
+    <!-- endbuild -->
+
+    <!-- build:css({.tmp,public}) styles/dboard-app.css -->
+    link(rel='stylesheet', href='css/dashboard.css')
+    <!-- endbuild -->
+
+  body
+    // Fixed navbar
+    .navbar.navbar-default
+      .container
+        .navbar-header.pull-left
+          a.navbar-brand(href='/')
+            strong IP
+            | db
+            span.label.label-success Web
+        ul.nav.navbar-nav.navbar-right.pull-right
+          li
+            a(href='.') Dashboard
+              span.label.label-info beta
+    .container
+      .row
+        .alerts
+          .reload.alert.alert-danger.fade.in.hidden
+            button.close(type='button', data-dismiss='alert', aria-hidden='true') ×
+            h4 Соединение с сервером было потеряно
+            p Хотите перезагрузить страницу?
+            p
+              button.ok.btn.btn-danger(type='button') Перезагрузить
+
+      .row
+        .col-md-3
+          #online-count.well.text-center(title='Количество открытых страничек сайта на данный момент (включая клиентов Dashboard)')
+            h3 сейчас
+            p#connections(style='font-size: 96px;line-height: 96px;')
+            h5 клиентов онлайн
+          .panel.panel-default(title='Статистика работы ноды')
+            .panel-heading
+              h3.panel-title
+                strong
+                  span#node-name node
+                span.pull-right
+                  small#node-upt
+            ul.list-group
+              li.list-group-item
+                | ЦПУ
+                span#node-cpu.badge
+              li.list-group-item
+                | Память
+                span#node-mem.badge
+          .panel.panel-default(title='Серверная статистика')
+            .panel-heading
+              h3.panel-title
+                strong
+                  span#host-name Хостинг
+                span.pull-right
+                  small#host-upt
+            ul.list-group
+              li.list-group-item
+                | Загрузка
+                span#host-load.badge
+              li.list-group-item
+                | Своб. пам.
+                span#host-mem.badge
+        .col-md-9
+          h4.text-center Онлайн активность
+          #table-visits
+
+          h4.text-center Лог
+          #table-log
+    
+  <!-- build:js(public) scripts/dboard-vendor.js -->
+  script(src='bower_components/jquery/jquery.js')
+  script(src='bower_components/bootstrap/dist/js/bootstrap.js')
+  script(src='js/lib/scrollToTop.js')
+  script(src='bower_components/socket.io-client/dist/socket.io.js')
+  <!-- endbuild -->
+
+  <!-- build:js(public) scripts/dboard-app.js -->
+  script(src='js/dashboard-admin-page.js')
+  <!-- endbuild -->

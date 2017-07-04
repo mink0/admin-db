@@ -1,0 +1,12 @@
+.modal-header
+  h3.modal-title Профиль DHCP для {{ip}}
+.modal-body
+  div.error(ng-if='error')
+    alert(type='warning', close='closeAlert()')
+      strong Ошибка: 
+      | {{error}}
+  select.form-control(ng-model='data.pname', ng-options='value for (key, value) in pnames')
+.modal-footer
+  button.btn.btn-success.pull-left(ng-click='reset()') Сбросить
+  button.btn.btn-default(ng-click='cancel()') Отмена
+  button.btn.btn-primary(ng-click='confirm()') Сохранить

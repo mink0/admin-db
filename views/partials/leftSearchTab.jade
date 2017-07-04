@@ -1,0 +1,38 @@
+div.search-results(ng-controller='SearchTabCtrl', ng-mouseenter='$parent.searchTabHover=true', ng-mouseleave='$parent.searchTabHover=false')
+  //-table.table.table-condensed
+    tbody
+      tr
+        td Время поиска:
+
+  table(ng-if='searchResults.eq', ng-class='{"width-zero": !$parent.searchTabHover, "width-full": $parent.searchTabHover}').table.table-condensed.eq
+    caption Устройства ({{ searchResults.eq.length }})
+    tbody
+      tr(ng-repeat='row in searchResults.eq', ng-click='openEqTab(row.eqObjId, row.eqLabel)',
+          tooltip-html-unsafe='{{row.popover | highlight:searchString}}', tooltip-append-to-body='true', tooltip-popup-delay='2000')
+        td {{$index + 1 + '.'}}
+        td(nowrap): span(ng-bind-html='row.type | highlight:searchString')
+        td(nowrap): span(ng-bind-html='row.eqLabel | highlight:searchString')
+        td: span(ng-bind-html='row.ipList.join(", ") | highlight:searchString')
+        td: span(ng-bind-html='row.dnsList.join(", ") | highlight:searchString')
+        td(nowrap): span(ng-bind-html='row.loc | highlight:searchString')
+        td(nowrap): span(ng-bind-html='row.fio | highlight:searchString')
+        td(nowrap): span(ng-bind-html='row.comments.slice(0,25) | highlight:searchString')
+
+  table(ng-if='searchResults.ip').table.table-condensed.ip
+    caption Подсети ({{ searchResults.ip.length }})
+    tbody
+      tr(ng-repeat='row in searchResults.ip', ng-click='openIpTab(row.ipObjId, row.ip, row.comments)',
+          tooltip-html-unsafe='{{row.popover | highlight:searchString}}', tooltip-append-to-body='true', tooltip-popup-delay='2000')
+        td {{$index + 1 + '.'}}
+        td: span(ng-bind-html='row.ip | highlight:searchString')
+        td: span(ng-bind-html='row.comments.slice(0,255) | highlight:searchString')
+
+  table(ng-if='searchResults.loc').table.table-condensed.loc
+    caption Расположение ({{ searchResults.loc.length }})
+      tbody
+        tr(ng-repeat='row in searchResults.loc', ng-click='openLocTab(row.locObjId)',
+            tooltip-html-unsafe='{{row.popover | highlight:searchString}}', tooltip-append-to-body='true', tooltip-popup-delay='2000')
+          td {{$index + 1 + '.'}}
+          td(nowrap): span(ng-bind-html='"[" + row.locType + "] " + row.name | highlight:searchString')
+          td(nowrap): span(ng-bind-html='row.path.slice(0,220) | highlight:searchString')
+

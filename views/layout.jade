@@ -1,0 +1,33 @@
+doctype html
+html(ng-app="ipdb", lang='ru')
+  head
+    meta(charset='utf8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    title IPdb · v.11.03.15
+    base(href='/')
+    //- Kendo UI (having problems with grunt-bower-install)
+    //- Problems with usemin, a lot of coupling inside kendo lib
+    //link(rel='stylesheet', href='bower_components/kendo-ui/src-com/styles/web/kendo.common.css')
+    //link(rel='stylesheet', href='bower_components/kendo-ui/src-com/styles/web/kendo.silver.css')
+
+    <!-- build:css(public) styles/vendor.css -->
+    // bower:css
+    //- kendo ui crafted for ipdb-web
+    link(rel='stylesheet', href='bower_components/kendo-ui/src-com/styles/web/kendo.treeview.css')
+    link(rel='stylesheet', href='bower_components/kendo-ui/src-com/styles/web/kendo.silver.fix-path.css')
+
+    link(rel='stylesheet', href='bower_components/bootstrap/dist/css/bootstrap.css')
+    link(rel='stylesheet', href='bower_components/ng-grid/ng-grid.min.css')
+    link(rel='stylesheet', href='bower_components/toastr/toastr.css')
+    link(rel='stylesheet', href='bower_components/angular-loading-bar/src/loading-bar.css')
+    // endbower
+    <!-- endbuild -->
+
+    <!-- build:css({.tmp,public}) styles/app.css -->
+    link(rel='stylesheet', href='css/app.css')
+    link(rel='stylesheet', href='css/app.animate.css')
+    <!-- endbuild -->
+
+  body
+    block body

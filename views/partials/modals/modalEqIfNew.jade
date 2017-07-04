@@ -1,0 +1,31 @@
+.modal-header
+  h3.modal-title Создать новый сетевой интерфейс?
+.modal-body
+  div.error(ng-if='error')
+    alert(type='warning', close='closeAlert()')
+      strong Ошибка: 
+      | {{error}}
+  
+  form.form-horizontal(role='form')
+    .form-group
+      label.control-label.col-sm-4(for='input1') Название интерфейса
+      .col-sm-8 
+        input#input1.form-control(type='text', placeholder='eth0', ng-model='data.ifname')
+    .form-group
+      label.col-sm-4.control-label(for='input2') MAC-адрес
+      .col-sm-8
+        input#input2.form-control(type='text', placeholder='00:11:22:33:44:55', ng-model='data.mac')
+    .form-group
+      .col-sm-offset-4.col-sm-8
+        .checkbox
+          label(for='input3')
+            input#input3(type='checkbox', ng-model='data.every')
+            | Подключать везде
+        .checkbox
+          label(for='input4')
+            input#input4(type='checkbox', ng-model='data.isTrunk')
+            | Транк
+
+.modal-footer
+  button.btn.btn-default(ng-click='cancel()') Отмена
+  button.btn.btn-primary(ng-click='confirm()') Сохранить

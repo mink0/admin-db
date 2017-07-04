@@ -1,0 +1,26 @@
+.modal-header
+  h3.modal-title Назначить новый IP-адрес для {{iface.name}}?
+.modal-body
+  div.error(ng-if='error')
+    alert(type='warning', close='closeAlert()')
+      strong Ошибка: 
+      | {{error}}
+  
+  form.form-horizontal(role='form')
+    .form-group(ng-class='{"has-error": data.iperr === "err", "has-success": data.iperr === "success"}')
+      label.control-label.col-sm-4(for='input1') IP-адрес
+      .col-sm-8 
+        input#input1.form-control(type='text', placeholder='{{ipFreeAddrs[0].ip}}', list='ip-addrs', ng-model='data.ip', ng-change='onIpChange(data.ip)')
+        datalist#ip-addrs
+          select
+            option(ng-repeat='item in ipFreeAddrs', value='{{item.ip}}') {{item.net}}
+    .form-group
+      .col-sm-offset-4.col-sm-8
+        .checkbox
+          label(for='input2')
+            input#input2(type='checkbox', ng-model='data.isDyn')
+            | Динамический (DHCP)
+
+.modal-footer
+  button.btn.btn-default(ng-click='cancel()') Отмена
+  button.btn.btn-primary(ng-click='confirm()') Сохранить

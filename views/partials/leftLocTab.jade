@@ -1,0 +1,12 @@
+div(ng-controller='LocationTreeCtrl')
+  div.pull-right
+    div.dropdown
+      ul.pull-right.dropdown-menu
+        li(ng-repeat='item in options')
+          a(ng-click='optionSel($index)') {{item.title}}
+      button.dropdown-toggle.btn-opts.btn.btn-default.btn-sm(type='button', data-toggle='dropdown')
+        span.caret 
+        //span.glyphicon.glyphicon-chevron-down
+
+  div.pull-left.treeview(kendo-tree-view='treeview', k-options='kOptions', ng-dblclick='newEqTab($event)', 
+    ng-right-click='contextMenu($event)', data-target='context-menu', context-menu='')

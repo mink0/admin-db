@@ -1,0 +1,42 @@
+.tab-animate.ng-enter,
+.tab-animate.ng-leave {
+  transition:0.3s linear all;
+}
+
+.tab-animate.ng-enter,
+.tab-animate.ng-leave.ng-leave-active {
+  // opacity:0;
+}
+.tab-animate.ng-leave,
+.tab-animate.ng-enter.ng-enter-active {
+  // opacity:1;
+}
+
+
+/* starting animations */
+.form-animate.ng-enter {
+  transition:0.5s linear all;
+  opacity: 1;
+}
+
+/* destination animations */
+.form-animate.ng-enter.ng-enter-active {
+  opacity: 0;
+}
+
+// .form-animate.ng-leave {
+//   transition:0.5s linear all;
+//   opacity: 1;
+// }
+
+// .form-animate.ng-leave-active {
+//   opacity: 0;
+// }
+.form-bdrop {
+  background-color: #fff;
+  z-index: 100;
+}
+
+.relative {
+  position: relative;
+}

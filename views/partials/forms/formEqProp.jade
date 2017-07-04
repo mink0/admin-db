@@ -1,0 +1,29 @@
+div.panel.panel-default
+  div.panel-heading Свойства
+  div.panel-body
+    div.error(ng-if='prop.error')
+      alert(type='warning', close='prop.error = null')
+        strong Ошибка: 
+        | {{prop.error}}
+    
+    form.form-horizontal(role='form', name='propForm')
+      div.form-group()
+        label.col-sm-3.control-label Статус
+        div.col-sm-9
+          select.form-control(ng-disabled='!prop.editable', name='status', ng-model='prop.status')
+            option(ng-repeat='val in prop.statusNames') {{val.name}}
+      div.form-group(ng-if='data.eq_info.serial_number || prop.editable')
+        label.col-sm-3.control-label Серийный номер
+        div.col-sm-9
+          input.form-control(type='text', placeholder='Серийный номер', ng-model='prop.serial', name='serial', ng-disabled='!prop.editable')
+      div.form-group(ng-if='data.eq_info.fio || prop.editable')
+        label.col-sm-3.control-label Пользователь
+        div.col-sm-9
+          input.form-control(type='text', placeholder='Пользователь', ng-model='prop.fio', name='fio', ng-disabled='!prop.editable',
+            typeahead='item for item in getFioTypeahead($viewValue)', typeahead-wait-ms='100')
+      div.form-group(ng-if='data.eq_info.comments || prop.editable')
+        label.col-sm-3.control-label Комментарий
+        div.col-sm-9
+          input.form-control(type='text', placeholder='Комментарий', ng-model='prop.comments', name='comments', ng-disabled='!prop.editable')
+      button.btn.btn-primary.pull-right(ng-if='!prop.editable', type='submit', ng-click='propEdit()') Редактировать
+      button.btn.m.btn-primary.pull-right(ng-if='prop.editable', type='submit', ng-click='propSave()') Сохранить

@@ -1,0 +1,31 @@
+{
+  "name": "admin-db-web",
+  "version": "0.0.0",
+  "description": "web ui for ipdb",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~1.9.1",
+    "angular": "~1.2.15",
+    "angular-route": "~1.2.15",
+    "angular-sanitize": "~1.2.15",
+    "angular-animate": "~1.2.15",
+    "bootstrap": "~3.1.1",
+    "angular-bootstrap": "~0.10.0",
+    "kendo-ui": "~2014.1.416",
+    "ng-grid": "~2.0.11",
+    "toastr": "~2.1.0",
+    "angular-loading-bar": "~0.6.0",
+    "angular-socket-io": "~0.6.0",
+    "socket.io-client": "0.9.17",
+    "angular-kendo": "~1.0.3",
+    "ng-context-menu": "0.1.3"
+  }
+}

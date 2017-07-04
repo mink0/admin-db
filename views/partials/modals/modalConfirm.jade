@@ -1,0 +1,11 @@
+.modal-header
+  h3.modal-title {{dlg.title}}
+.modal-body
+  div.error(ng-if='error')
+    alert(type='warning', close='closeAlert()')
+      strong Ошибка: 
+      | {{error}}
+  p {{dlg.text}}
+.modal-footer
+  button.btn.btn-default(ng-click='cancel()') {{dlg.no}}
+  button.btn.btn-primary(ng-click='confirm()') {{dlg.yes}}

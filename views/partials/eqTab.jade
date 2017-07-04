@@ -1,0 +1,125 @@
+div.equipTab(ng-controller='EqTabCtrl', style='overflow: visible; height: auto;')
+  div.index-spinner.tab(ng-if='!data')
+  div(ng-if='data')
+    h4.title
+      span {{data.eq_info.model_name}} 
+      small: span(ng-if='data.eq_info.vendor_name !== "Неизвестен"') {{data.eq_info.vendor_name}} 
+      p.pull-right {{data.eq_info.type_name}} 
+    
+    div(ng-controller='FormEqPropCtrl', ng-class='{"backdrop-parent": form.saveMode}')
+      div.panel.panel-default(ng-class='{"backdrop-child": form.saveMode}')
+        div.panel-heading Свойства
+        div.panel-body
+          ipdb-form
+            form.form-horizontal(role='form', name='form.parent')
+              div.form-group
+                label.col-sm-3.control-label(for='p-st') Статус
+                div.col-sm-9
+                  select#p-st.form-control(ng-disabled='!form.editMode', name='status', ng-model='form.status')
+                    option(ng-repeat='val in form.statusNames') {{val.name}}
+              div.form-group(ng-if='!!form.serial || !!form.editMode')
+                label.col-sm-3.control-label(for='p-sl') Серийный номер
+                div.col-sm-9
+                  input#p-sl.form-control(type='text', placeholder='Серийный номер', ng-model='form.serial', name='serial', ng-disabled='!form.editMode')
+              div.form-group(ng-if='!!form.fio || !!form.editMode')
+                label.col-sm-3.control-label(for='p-ur') Пользователь
+                div.col-sm-9
+                  input#p-ur.form-control(type='text', placeholder='Пользователь', ng-model='form.fio', name='fio', ng-disabled='!form.editMode',
+                    typeahead='item for item in getFioTypeahead($viewValue)', typeahead-wait-ms='100')
+              div.form-group(ng-if='!!form.comments || !!form.editMode')
+                label.col-sm-3.control-label(for='p-ct') Комментарий
+                div.col-sm-9
+                  input#p-ct.form-control(type='text', placeholder='Комментарий', ng-model='form.comments', name='comments', ng-disabled='!form.editMode')
+
+    div.panel-spacer(ng-if='data.eq_spec')
+      div.panel.panel-default(ng-if='data.eq_spec.hasOwnProperty("ip_mgmt")')
+        div.panel-heading.clearfix
+          span Интерфейс управления
+          button.pull-right.btn.btn-xs.btn-primary(ng-if='!data.eq_spec.ip_mgmt.ip', type='button'): span.glyphicon.glyphicon-plus
+        div.panel-body(ng-if='data.eq_spec.ip_mgmt.ip')
+          div
+            div.col-sm-4
+              div.input-group.input-group-sm
+                span.input-group-addon IP-адрес
+                input.form-control(type='text', placeholder='', value='{{data.eq_spec.ip_mgmt.ip}}', ng-disabled='true', style='font-weight: bold;')
+            div.col-sm-8
+              div.input-group.input-group-sm
+                span.input-group-addon DNS-имя
+                input.form-control(type='text', placeholder='', value='{{data.eq_spec.ip_mgmt.fqdn}}', ng-disabled='true', style='font-weight: bold;')
+
+      div.panel.panel-default(ng-if='data.eq_spec.hasOwnProperty("vlans")')
+        div.panel-heading.clearfix
+          span VLAN'ы
+          button.pull-right.btn.btn-xs.btn-primary(type='button', ng-click='eqReFill()', tooltip='Загрузить актуальную информацию с устройства', 
+            tooltip-append-to-body='true'): span.glyphicon.glyphicon-refresh
+
+        table.table.table-condensed.table-hover.table-collapsable(ng-if='data.eq_spec.vlans')
+          thead
+            tr
+              th №
+              th Описание
+              th Подсеть
+          tbody
+            tr(ng-repeat='vlan in data.eq_spec.vlans')
+              td {{ vlan.n }}
+              td {{ vlan.name }}
+              td(ng-if='vlan.nets.length === 1') {{ vlan.nets[0] }}
+              td(ng-if='vlan.nets.length > 1') Одна из: {{ vlan.nets.join(', ') }}
+
+      div.panel.panel-default(ng-if='data.eq_spec.hasOwnProperty("ilo")')
+        div.panel-heading.clearfix
+          span ILO интерфейс
+          button.pull-right.btn.btn-xs.btn-primary(ng-if='!data.eq_spec.ilo.ip', type='button'): span.glyphicon.glyphicon-plus
+        div.panel-body(ng-if='data.eq_spec.ilo.ip')
+          div.col-sm-6
+            div.input-group.input-group-sm
+              span.input-group-addon IP-адрес
+              input.form-control(type='text', placeholder='', value='{{data.eq_spec.ilo.ip}}', ng-disabled='true', style='font-weight: bold;')
+          div.col-sm-6
+            div.input-group.input-group-sm
+              span.input-group-addon MAC-адрес
+              input.form-control(type='text', placeholder='', value='{{data.eq_spec.ilo.mac}}', ng-disabled='true', style='font-weight: bold;')
+
+    
+    div.panel.panel-default
+      div.panel-heading.expandable(ng-click='expandRight()')
+        span Интерфейсы
+        button.pull-right.btn.btn-xs.btn-primary(type='button', ng-click='ifNew($event)') + Новый интерфейс
+        
+      table#equip-table.table.table-condensed.table-hover.table-collapsable
+        thead
+          tr
+            th(ng-repeat='th in thead', ng-click='changeSorting(th.column)')
+              span.pull-left {{th.title}}
+              span.sortable(ng-show='sort.column == th.column && !sort.descending').glyphicon.glyphicon-chevron-up
+              span.sortable(ng-show='sort.column == th.column && sort.descending').glyphicon.glyphicon-chevron-down
+            th &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        tbody
+          tr(ng-repeat='iface in data.eq_ifaces|orderBy:sort.column:sort.descending')
+            td(data-title='Интерфейс'): a(ng-click='ifNameEdit(iface)', href='') {{iface.name}}
+            td(data-title='MAC-адрес')
+              a.alt(ng-if='!iface.mac', ng-click='ifMacEdit(iface)', href='') не&nbsp;назначен
+              a(ng-if='iface.mac', ng-click='ifMacEdit(iface)', href='') {{iface.mac}}
+            //- Every
+            td(data-title='Подключать везде'): input(type='checkbox', title='Подключать везде', ng-model='iface.every', ng-click='ifChkEdit("every", iface)')
+            //- IP
+            td(data-title='IP-адрес'): ul.unstyled(ng-repeat='ip in iface.addrData.ip track by $index')
+              li(ng-if='!ip') не&nbsp;назначен
+              li(ng-if='ip'): a(ng-click='ifIpEdit(iface, $index)', href='') {{ip}}
+            //- Профиль DHCP
+            //- td(data-title='DHCP профиль')
+            //-   ul.unstyled(ng-repeat='dhcpP in iface.addrData.dhcpP track by $index')
+            //-     li(ng-if='!iface.addrData.ip[$index]') не&nbsp;назначен
+            //-     li(ng-if='iface.addrData.ip[$index]')
+            //-       a(ng-if='!dhcpP', href='', ng-click='ifDhcpProfileEdit(iface.addrData.ip[$index], null)') как&nbsp;у&nbsp;подсети
+            //-       a(ng-if='dhcpP', href='', ng-click='ifDhcpProfileEdit(iface.addrData.ip[$index], dhcpP)', title='{{data.dhcp_pnames[dhcpP]}}') {{data.dhcp_pnames[dhcpP].slice(0,15)}} 
+            td(data-title='DHCP'): ul.unstyled(ng-repeat='isDyn in iface.addrData.isDyn track by $index')
+              li(ng-if='isDyn === null') &nbsp;
+              li(ng-if='isDyn !== null'): input(type='checkbox', title='Получать адрес по DHCP', ng-model='iface.addrData.isDyn[$index]', ng-click='ifDhcpEdit(iface, $index)')
+            td(data-title='Транк'): input(type='checkbox', title='Транк интерфейс', ng-model='iface.isTrunk', ng-click='ifChkEdit("isTrunk", iface)')
+            td(ng-if='data.eq_spec.hasOwnProperty("if_vlans")', data-title='VLAN') {{iface.vlans.join(', ')}}
+            //- Buttons
+            td.buttons(data-title='')
+              div.btn-group
+                button.btn.btn-sm.btn-primary(type='button', title='Назначить IP-адрес', ng-click='ifIpNew(iface)'): span.glyphicon.glyphicon-plus
+                button.btn.btn-sm.btn-danger(type='button', title='Удалить интерфейс', ng-click='ifDelete(iface)'): span.glyphicon.glyphicon-trash

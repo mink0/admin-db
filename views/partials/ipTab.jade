@@ -1,0 +1,78 @@
+div.ipTab(ng-controller='IpTabCtrl')
+  div.index-spinner.tab(ng-if='!data')
+  div(ng-if='data')
+    h4.title
+      span {{ ip }} 
+      small {{ comments }} 
+      p.pull-right Подсеть
+
+    div(ng-controller='FormIpPropCtrl', ng-class='{"backdrop-parent": form.saveMode}')
+      div.panel.panel-default(ng-class='{"backdrop-child": form.saveMode}')
+        div.panel-heading Свойства
+        div.panel-body
+          ipdb-form
+            form.form-horizontal(role='form', name='form.parent')
+              div.form-group(ng-if='!!form.gw || !!form.editMode')
+                label.col-sm-3.control-label Шлюз
+                div.col-sm-9
+                  input.form-control(type='text', placeholder='Шлюз сети',  ng-model='form.gw', name='gw', ng-disabled='!form.editMode')
+              div.form-group
+                label.col-sm-3.control-label Маска
+                div.col-sm-9
+                  input.form-control(type='text', placeholder='Маска сети', value='{{data.net_info.info.mask}}', disabled='disabled')
+              div.form-group(ng-if='!!form.shared_name || !!form.editMode')
+                label.col-sm-3.control-label Общее имя сети
+                div.col-sm-9
+                  input.form-control(type='text', placeholder='Общее имя сети', ng-model='form.shared_name', name='shared_name', ng-disabled='!form.editMode')
+              div.form-group(ng-if='!!form.comments || !!form.editMode')  
+                label.col-sm-3.control-label Комментарий
+                div.col-sm-9
+                  input.form-control(type='text', placeholder='Комментарий', ng-model='form.comments', name='comments', ng-disabled='!form.editMode')
+              div.form-group(ng-if='!!form.dhcp_profile || !!form.editMode')
+                label.col-sm-3.control-label(for='d-st') DHCP-профиль
+                div.col-sm-9
+                  select#d-st.form-control(ng-model='form.dhcp_profile', name='dhcp_profile', ng-disabled='!form.editMode')
+                    option(ng-repeat='val in form.dhcpPnames') {{val.name}}
+              div.form-group(ng-if='!!form.pool_start || !!form.editMode')
+                label.col-sm-3.control-label DHCP-пул
+                div.col-sm-3
+                  input.form-control(type='text', placeholder='Начальный адрес', title='Начальный IP-адрес DHCP пула', ng-model='form.pool_start', name='pool_start', ng-disabled='!form.editMode')
+                div.col-sm-2
+                  input.form-control(type='text', placeholder='Размер пула', title='Количество адресов в DHCP пуле', ng-model='form.pool_amount', name='pool_amount', ng-disabled='!form.editMode')
+              button.btn.btn-danger.pull-left(type='button', ng-if='!!form.editMode', ng-click='removeDHCP()') Без DHCP
+
+    div.panel.panel-default
+      div.panel-heading.expandable(ng-click='expandRight()')
+        span.pull-left.glyphicon.glyphicon-chevron-left.exp
+        span Адреса: {{data.net_info.info.first}} - {{data.net_info.info.last}}
+        span.pull-right.glyphicon.glyphicon-chevron-right.exp
+        span.pull-right Свободно: {{data.net_info.info.first_free}} ({{data.net_info.info.size-data.net_addrs.length-2}}/{{data.net_info.info.size}})
+      table#ip-table.table.table-condensed.table-hover.table-bordered.table-responsive.table-collapsable
+        thead
+          tr
+            th(ng-repeat='th in thead', ng-click='changeSorting(th.column)')
+              span.pull-left {{th.title}}
+              span.sortable(ng-show='sort.column == th.column && !sort.descending').glyphicon.glyphicon-chevron-up
+              span.sortable(ng-show='sort.column == th.column && sort.descending').glyphicon.glyphicon-chevron-down
+            //- th(nowrap)
+        tbody
+          tr(ng-repeat='row in data.net_addrs|orderBy:sort.column:sort.descending', ng-class='{active: row.type}', ng-dblclick='openTab(row)')
+            //- td(ng-repeat='th in thead', data-title='{{th.title}}', tooltip='{{row.comments}}', tooltip-append-to-body='true') {{ row[th.column] }}
+            td(data-title='{{thead[0].title}}') {{row[thead[0].column]}}
+            td(data-title='{{thead[1].title}}') {{row[thead[1].column].join(', ')}}
+            td(data-title='{{thead[2].title}}') {{row[thead[2].column].join(', ')}}
+            td(data-title='{{thead[3].title}}') {{row[thead[3].column]}}
+            td(data-title='{{thead[4].title}}') {{row[thead[4].column]}}
+            td(data-title='{{thead[5].title}}') {{row[thead[5].column]}}
+            td(data-title='{{thead[6].title}}', tooltip='{{row[thead[6].column]}}', tooltip-append-to-body='true') {{row[thead[6].column]}}
+            td(data-title='{{thead[7].title}}', nowrap)
+              span(ng-if='!row.hasOwnProperty("profile_name")') не назначен
+              span(ng-if='row.hasOwnProperty("profile_name")')
+                a(ng-if='!row.profile_name', href='', ng-click='ifDhcpProfileEdit(row.ip_addr, null)') как у подсети
+                a(ng-if='row.profile_name', href='', ng-click='ifDhcpProfileEdit(row.ip_addr, row.profile_name)', 
+                  tooltip='{{row.profile_name}}', tooltip-append-to-body='true') {{row.profile_name.slice(0,15)}} 
+            td(data-title='{{thead[8].title}}') {{row[thead[8].column]}}
+            //- td.buttons(data-title='', nowrap)
+            //-   div.btn-group
+            //-     button.btn.btn-xs.btn-warning: span.glyphicon.glyphicon-trash
+            //-     button.btn.btn-xs.btn-primary: span.glyphicon.glyphicon-plus

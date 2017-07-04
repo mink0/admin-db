@@ -1,0 +1,10 @@
+div(ng-controller='DnsTreeCtrl')
+  div.pull-right.dropdown
+    ul.pull-right.dropdown-menu
+      li
+        input.form-control.input-sm.filter(ng-model='filterStr', ng-click="$event.stopPropagation();", type='text', placeholder='Фильтр')
+    button.dropdown-toggle.btn-opts.btn.btn-default.btn-sm(type='button', data-toggle='dropdown')
+      span.caret 
+
+  div.pull-left.treeview(ng-dblclick='openTab($event)', kendo-tree-view='treeview', k-options='kOptions')
+

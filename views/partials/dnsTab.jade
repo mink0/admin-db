@@ -1,0 +1,59 @@
+div.dnsTab(ng-controller='DnsTabCtrl')
+  div.index-spinner.tab(ng-if='!data')
+  div(ng-if='data')
+    h4.title
+      span {{ dns }} 
+      small {{ comments }} 
+      p.pull-right DNS 
+
+    div(ng-controller='FormDnsPropCtrl', ng-class='{"backdrop-parent": form.saveMode}')
+      div.panel.panel-default(ng-class='{"backdrop-child": form.saveMode}')
+        div.panel-heading Свойства
+        div.panel-body
+          ipdb-form
+            form.form-horizontal(role='form', name='form.parent')
+              div.form-group
+                label.col-sm-3.control-label Имя домена
+                div.col-sm-9
+                  input.form-control(type='text', placeholder='Имя домена',  ng-model='form.name', name='name', ng-disabled='!form.editMode')
+              div.form-group
+                label.col-sm-3.control-label Тип
+                div.col-sm-2
+                  input.form-control(type='text', placeholder='Тип домена', value='{{data.dns_prop.zone_type}}', disabled='disabled')
+              div.form-group(ng-if='!!form.fwip || !!form.editMode')
+                label.col-sm-3.control-label DNS форвардер
+                div.col-sm-9
+                  input.form-control(type='text', placeholder='IP-адрес форвардера',  ng-model='form.fwip', name='fwip', ng-disabled='!form.editMode')
+              div.form-group(ng-if='!!form.comments || !!form.editMode')  
+                label.col-sm-3.control-label Комментарий
+                div.col-sm-9
+                  input.form-control(type='text', placeholder='Комментарий', ng-model='form.comments', name='comments', ng-disabled='!form.editMode')
+
+    //div(ng-grid='gridOptions1')
+    div(ng-if='data.dns_a.length > 0').panel.panel-default
+      div.panel-heading 
+        span DNS записи ({{ data.dns_a.length }})
+        span.pull-right
+      //div.panel-body
+      div.dns-grid(ng-grid='gridOptions')
+      
+      //div.panel-heading 
+      //  span DNS записи ({{ data.dns_a.length }})
+      //  span.pull-right  
+      //table#ip-table.table.table-condensed.table-hover.table-bordered.table-responsive.table-collapsable
+      //  thead
+      //    tr
+      //      th DNS имя
+      //      th IP-адрес
+      //      th TTL
+      //      th &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      //  tbody
+      //    tr(ng-repeat='i in data.dns_a')
+      //      td(data-title='DNS имя') {{ i.fqdn }}
+      //      td(data-title='IP-адрес') {{ i.rvalue }}
+      //      td(data-title='TTL') {{ i.rttl }}
+      //      td.buttons(data-title='')
+      //        div.btn-group
+      //          button.btn.btn-xs.btn-primary: span.glyphicon.glyphicon-plus
+      //          button.btn.btn-xs.btn-warning: span.glyphicon.glyphicon-edit
+      //          button.btn.btn-xs.btn-danger: span.glyphicon.glyphicon-trash

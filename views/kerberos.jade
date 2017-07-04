@@ -1,0 +1,80 @@
+extends layout
+block body
+  div.container.kerberos-error
+    div.row
+      div.col-xs-10.col-xs-offset-1.jumbotron.shadow.bg-gray
+        h1.big-title KERBEROS
+          span.label.label-danger 5
+        br
+
+        div.alert.alert-warning
+          h5.text-center #{info}
+        br
+
+        div#accordion.panel-group
+          div.panel.panel-default
+            div.panel-heading
+              h4.panel-title
+                a(data-toggle='collapse', data-parent='#accordion', href='#collapse-ie') Настройка браузера Internet Explorer
+            div#collapse-ie.panel-collapse.collapse
+              div.panel-body
+                | Поддержки браузера Internet Explorer не планируется.
+                //- ol
+                  li Войдите в домен Active Directory Windows
+                  li Запустите браузер Internet Explorer
+                  li Зайдите в меню Сервис -> Свойства обозревателя -> вкладка Безопасность
+                  li Выберите зону <b>Надежные узлы</b>
+                  li Выберите <b>низкий</b> уровень безопасности для этой зоны
+                  li Нажмите кнопку Узлы
+                  li Добавьте <b>http://ipdb.vkb.ru</b> в зону <b>Надежные узлы</b>
+                  li Нажмите Применить
+                  li Перезапустите браузер Internet Explorer
+          div.panel.panel-default
+            div.panel-heading
+              h4.panel-title
+                a(data-toggle='collapse', data-parent='#accordion', href='#collapse-ch') Настройка браузера Google Chrome
+            div#collapse-ch.panel-collapse.collapse
+              div.panel-body
+                h4 1. Создание политики авторизации:
+                | Вручную:
+                <br />
+                pre
+                  | Необходимо создасть строковый ключ AuthServerWhitelist в реестре по адресу
+                  <b>HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome\AuthServerWhitelist</b>
+                  | и записать в него:
+                  <b>*vkb.ru</b>
+                | Или можно <a href="/assets/ipdb-chrome.reg">загрузить и импортировать ключ реестра Windows</a>.
+                <br />
+                | Перезапустите браузер.
+                h4 2. Создание ярлыка запуска (для Google Chrome <b>старых версий (до 40 включительно)</b>):
+                ol
+                  li Войдите в домен Active Directory Windows
+                  li Создайте ярлык запуска Chrome с параметрами: --auth-server-whitelist=".vkb.ru"
+                    <br />
+                | Например: "C:\Documents and Settings\username\Local Settings\Application Data\Google\Chrome\Application\chrome.exe"  --auth-server-whitelist=".vkb.ru"
+                <br />
+                h4 3. Для других операционных систем:
+                | См. <a href="https://dev.chromium.org/administrators/policy-list-3#AuthServerWhitelist">dev.chromium.org</a>
+          div.panel.panel-default
+            div.panel-heading
+              h4.panel-title
+                a(data-toggle='collapse', data-parent='#accordion', href='#collapse-fi') Настройка браузера Mozilla Firefox
+            div#collapse-fi.panel-collapse.collapse.in
+              div.panel-body
+                ol
+                  li Войдите в домен Active Directory Windows
+                  li Запустите браузер Mozilla Firefox
+                  li В адресной строке введите <b>about:config</b>, нажмите Enter
+                  li Найдите поле <b>network.negotiate-auth.trusted-uris</b> и два раза щелкните по нему мышкой
+                  li Впишите <b>.vkb.ru</b> в это поле. Если в этом поле уже имеются записи, добавьте <b>.vkb.ru</b> через запятую.
+                  li Перезапустите браузер
+  footer
+    include footer.jade
+
+  <!-- build:js(public) scripts/krb-vendor.js -->
+  // bower:js
+  script(src='bower_components/jquery/jquery.js')
+  script(src='bower_components/bootstrap/dist/js/bootstrap.js')
+  script(src='js/lib/scrollToTop.js')
+  // endbower
+  <!-- endbuild -->

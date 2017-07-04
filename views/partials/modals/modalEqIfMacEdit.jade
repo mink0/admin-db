@@ -1,0 +1,25 @@
+.modal-header
+  h3.modal-title Редактировать MAC-адрес: {{unchanged}}
+.modal-body
+  div.error(ng-if='error')
+    alert(type='warning', close='closeAlert()')
+      strong Ошибка: 
+      | {{error}}
+  
+  form.form-horizontal(role='form')
+    .form-group
+      label.col-sm-4.control-label(for='input1') Linux нотация
+      .col-sm-8
+        input#input1.form-control.col-sm-8(type='text', placeholder='{{placeholder}}', ng-model='data.lMac', ng-change='calcMac.fromLinux(data.lMac)')
+    .form-group
+      label.col-sm-4.control-label(for='input2') Windows нотация
+      .col-sm-8
+        input#input2.form-control(type='text', placeholder='{{placeholder}}', ng-model='data.wMac', ng-change='calcMac.fromWindows(data.wMac)')
+    .form-group
+      label.col-sm-4.control-label(for='input3') Cisco нотация
+      .col-sm-8
+        input#input3.form-control(type='text', placeholder='{{placeholder}}', ng-model='data.cMac', ng-change='calcMac.fromCisco(data.cMac)')
+
+.modal-footer
+  button.btn.btn-default(ng-click='cancel()') Отмена
+  button.btn.btn-primary(ng-click='confirm()') Сохранить

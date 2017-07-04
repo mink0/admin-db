@@ -1,0 +1,70 @@
+.modal-header
+  h3.modal-title Добавить новое устройство
+
+.modal-body
+  div.error(ng-if='error')
+    alert(type='warning', close='closeAlert()')
+      strong Ошибка: 
+      | {{error}}
+  
+  form.form-horizontal(role='form')
+    .form-group
+      label.control-label.col-sm-4(for='input1t') Тип
+      .col-sm-8 
+        select#input1t.form-control(ng-model='data.type', ng-options='value for (key, value) in eqtypes')
+    div(ng-if='show.general')
+      .form-group
+        label.control-label.col-sm-4(for='input1') Фирма производитель
+        .col-sm-8 
+          select#input1.form-control(ng-model='data.vendor', ng-options='value for (key, value) in eqvendors')
+      .form-group
+        label.control-label.col-sm-4(for='input2') Модель устройства
+        .col-sm-8 
+          select#input2.form-control(ng-model='data.model', ng-options='value for (key, value) in eqmodels')
+      .form-group
+        label.control-label.col-sm-4(for='input3') Серийный номер
+        .col-sm-8 
+          input#input3.form-control(type='text', ng-model='data.serial')
+      .form-group
+        label.control-label.col-sm-4(for='input4') Статус устройства
+        .col-sm-8 
+          select#input4.form-control(ng-model='data.status', ng-options='value for (key, value) in statusNames')
+      .form-group
+        label#input6.control-label.col-sm-4(for='input6') Пользователь
+        .col-sm-8
+          input#input6.form-control(type='text', ng-model='data.fio', name='fio', 
+            typeahead='item for item in getFioTypeahead($viewValue)', typeahead-wait-ms='100')
+    .form-group(ng-if='show.label')
+      label.control-label.col-sm-4(for='input5') Ярлык
+      .col-sm-5
+        .input-group
+          input#input5.form-control(type='text', ng-model='data.label', placeholder='PCM-000-001')
+          span.input-group-btn
+            button.btn.btn-warning(type='button') Сгенерить
+    div(ng-if='show.ipaddr')
+      .form-group
+        label.col-sm-4.control-label(for='input2') MAC-адрес
+        .col-sm-8
+          input#input2.form-control(type='text', placeholder='00:11:22:33:44:55', ng-model='data.mac')
+      .form-group(ng-class='{"has-error": data.iperr === "err", "has-success": data.iperr === "success"}')
+        label.control-label.col-sm-4(for='input6') IP-адрес
+        .col-sm-8 
+          input#input6.form-control(type='text', placeholder='{{data.ipFreeAddrs[0].ip}}', list='ip-addrs', ng-model='data.ip', ng-change='onIpChange(data.ip)')
+          datalist#ip-addrs
+            select
+              option(ng-repeat='item in ipFreeAddrs', value='{{item.ip}}') {{item.net}}
+      .form-group
+        .col-sm-offset-4.col-sm-8
+          .checkbox
+            label(for='input7')
+              input#input7(type='checkbox', ng-model='data.isDyn')
+              | Динамический (DHCP)
+
+    .form-group(ng-if='show.general')
+      label.control-label.col-sm-4(for='inputCom') Комментарий
+      .col-sm-8
+        textarea#inputCom.form-control(ngModel='string', rows='3')
+
+.modal-footer
+  button.btn.btn-default(ng-click='cancel()') Отмена
+  button.btn.btn-primary(ng-click='confirm()') Создать
